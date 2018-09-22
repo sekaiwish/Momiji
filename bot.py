@@ -46,7 +46,7 @@ async def dump(rx):
                 c = bot.logs_from(rx.message.channel, limit=10)
             if not os.path.exists("logs"):
                 os.makedirs("logs")
-            filename = "logs\\" + "discLogs_" + rx.message.channel.name + ".txt"
+            filename = "logs/" + "discLogs_" + rx.message.channel.name + ".txt"
             file = open(filename, 'w')
             async for message in c:
                 try:
@@ -80,7 +80,7 @@ async def dump_text(rx):
                 c = bot.logs_from(rx.message.channel, limit=10)
             if not os.path.exists("logs"):
                 os.makedirs("logs")
-            filename = "logs\\" + "discLogs_Text_" + rx.message.channel.name + ".txt"
+            filename = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
             await bot.say("logging... :gun: pew pew pew haha")
             file = open(filename, 'w')
             async for message in c:
@@ -105,7 +105,7 @@ async def dump_text(rx):
 async def rl(rx):
     try:
         #cname = rx.message.channel.name
-        CC_add = "logs\\" + "discLogs_Text_" + rx.message.channel.name + ".txt"
+        CC_add = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
         ccF = open(CC_add, 'r')
         CC = ccF.readlines()  # global
         ccF.close()
@@ -129,7 +129,7 @@ async def rl(rx):
 
 def rl_inBot(rx, twoLine = False):
     try:
-        CC_add = "logs\\" + "discLogs_Text_" + rx.message.channel.name + ".txt"
+        CC_add = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
         ccF = open(CC_add, 'r')
         CC = ccF.readlines()  # global
         ccF.close()
@@ -151,7 +151,7 @@ def rl_inBot(rx, twoLine = False):
 
 @bot.command(pass_context=True)
 async def rt(rx):
-    CC_add = "logs\\" + "discLogs_Text_correctchat.txt"
+    CC_add = "logs/" + "discLogs_Text_correctchat.txt"
     with open(CC_add) as f:
         text = f.read()
     text_model = markovify.Text(text)
@@ -168,7 +168,7 @@ async def rt(rx):
 @bot.command(pass_context=True)
 async def ri(rx):
     try:
-        CC_add = "logs\\" + "discLogs_Text_" + rx.message.channel.name + ".txt"
+        CC_add = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
         ccF = open(CC_add, 'r')
         CC = ccF.readlines()  # global
         ccF.close()
