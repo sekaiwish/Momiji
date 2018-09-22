@@ -52,8 +52,7 @@ async def dump(rx):
                 try:
                     url = message.attachments[0]['url']
                     file.write(url + "\n")
-                    i+=1
-                    print(i)
+                    i += 1
                 except:
                     pass
             file.close()
@@ -88,6 +87,7 @@ async def dump_text(rx):
                         continue
                     else:
                         file.write(url + "\n")
+                        print("downloaded {}".format(str(i)))
                         i += 1
                 except:
                     pass
