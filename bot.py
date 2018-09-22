@@ -9,6 +9,8 @@ from pathlib import Path
 from urltest import downloadTxt
 
 bot = commands.Bot(command_prefix=".")
+if not os.path.exists("logs"):
+    os.makedirs("logs")
 
 @bot.event
 async def on_ready():
@@ -44,8 +46,6 @@ async def dump(rx):
                 print(int(rx.message.content.split(' ')[1]))
             except:
                 c = bot.logs_from(rx.message.channel, limit=10)
-            if not os.path.exists("logs"):
-                os.makedirs("logs")
             filename = "logs/" + "discLogs_" + rx.message.channel.name + ".txt"
             file = open(filename, 'w')
             async for message in c:
@@ -53,13 +53,13 @@ async def dump(rx):
                     url = message.attachments[0]['url']
                     file.write(url + "\n")
                     i+=1
+                    print(i)
                 except:
                     pass
             file.close()
             #await bot.say("done: " + str(i) + " pictures dumped to txt in: " + "\\" + "logs\\" + "discLogs_" + rx.message.channel.name + ".txt")
             await bot.say("downloading...")
             downloadTxt(filename, rx.message.channel.name)
-            #await bot.say("done downloading to \\" + rx.message.channel.name)
             await bot.say("done downloading " + str(i) + " channel images.")
         else:
             await bot.say("sorry, not for u. :cry:")
@@ -78,8 +78,6 @@ async def dump_text(rx):
                 print(int(rx.message.content.split(' ')[1]))
             except:
                 c = bot.logs_from(rx.message.channel, limit=10)
-            if not os.path.exists("logs"):
-                os.makedirs("logs")
             filename = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
             await bot.say("logging... :gun: pew pew pew haha")
             file = open(filename, 'w')
