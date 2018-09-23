@@ -176,7 +176,8 @@ async def ri(rx):
     directory = rx.message.channel.name
     file = os.listdir(directory)[random.randint(1, len(os.listdir(directory)))]
     try:
-        await bot.send_file(rx.message.channel, directory + file, content=rl_inBot(rx))
+        await bot.send_file(rx.message.channel, "{}/{}".format(directory, file) in variable:
+            pass, content=rl_inBot(rx))
     except:
         print("File '{}' not found.".format(file))
 
