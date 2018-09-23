@@ -46,7 +46,7 @@ async def dump(rx):
                 print(int(rx.message.content.split(' ')[1]))
             except:
                 c = bot.logs_from(rx.message.channel, limit=10)
-            filename = "logs/" + "discLogs_" + rx.message.channel.name + ".txt"
+            filename = "logs/discLogs_" + rx.message.channel.name + ".txt"
             file = open(filename, 'w')
             async for message in c:
                 try:
@@ -62,7 +62,6 @@ async def dump(rx):
             await bot.say("done downloading " + str(i) + " channel images.")
         else:
             await bot.say("sorry, not for u. :cry:")
-            print("someone not u tried to use dumpPics")
     except:
         pass
 
@@ -77,9 +76,9 @@ async def dump_text(rx):
                 print(int(rx.message.content.split(' ')[1]))
             except:
                 c = bot.logs_from(rx.message.channel, limit=10)
-            filename = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
+            filename = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
             await bot.say("logging... :gun: pew pew pew haha")
-            file = open(filename, 'w')
+            file = open(filename, "w")
             async for message in c:
                 try:
                     url = message.content
@@ -88,14 +87,16 @@ async def dump_text(rx):
                     else:
                         file.write(url + "\n")
                         i += 1
-                        print("downloaded {}".format(str(i)))
+                        if i % 1000 == 0:
+                            print("downloaded {} lines".format(str(i)))
+                            pass
                 except:
+                    print("error dumping text")
                     pass
             file.close()
             await bot.say("collected " + str(i) + " lines of text")
         else:
             await bot.say("sorry, not for u. :cry:")
-            print("someone not u tried to use dumpPics")
     except:
         pass
 
@@ -103,7 +104,7 @@ async def dump_text(rx):
 async def rl(rx):
     try:
         #cname = rx.message.channel.name
-        CC_add = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
+        CC_add = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
         ccF = open(CC_add, 'r')
         CC = ccF.readlines()  # global
         ccF.close()
@@ -127,14 +128,13 @@ async def rl(rx):
 
 def rl_inBot(rx, twoLine = False):
     try:
-        CC_add = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
+        CC_add = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
         ccF = open(CC_add, 'r')
         CC = ccF.readlines()  # global
         ccF.close()
     except:
         print("loading CC list failed... check file name/dir")
         CC = ["nah"]
-    print(len(CC))
     if twoLine == True:
         texts = ""
         texts2 = ""
@@ -149,7 +149,7 @@ def rl_inBot(rx, twoLine = False):
 
 @bot.command(pass_context=True)
 async def rt(rx):
-    CC_add = "logs/" + "discLogs_Text_correctchat.txt"
+    CC_add = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
     with open(CC_add) as f:
         text = f.read()
     text_model = markovify.Text(text)
@@ -166,17 +166,17 @@ async def rt(rx):
 @bot.command(pass_context=True)
 async def ri(rx):
     try:
-        CC_add = "logs/" + "discLogs_Text_" + rx.message.channel.name + ".txt"
-        ccF = open(CC_add, 'r')
+        CC_add = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
+        ccF = open(CC_add, "r")
         CC = ccF.readlines()  # global
         ccF.close()
     except:
         #print("loading CC list failed... check file name/dir")
         CC = ["if u see this message joey fucked up"]
-    ext = [".jpg",".png",".gif",".jpeg",".webp"]
+    ext = [".jpg",".png",".gif",".jpeg",".webp",".webm"]
     folderPath = rx.message.channel.name
     fileCount = len(os.listdir(folderPath))
-    randInt = str(random.randint(1,fileCount))
+    randInt = str(random.randint(1, fileCount))
     file = os.path.join(folderPath, randInt)
     for i in ext:
         fileCheck = file + i
@@ -190,10 +190,9 @@ async def ri(rx):
 
 @bot.command(pass_context=True)
 async def rp(rx):
-    print("rp running")
     names = ["bean","joey","jacob","nick","godfrey","steven","derek","kyle tamondong","roman","ben cimperman","anna","grant","jimmy","cole","max","dylan","kash","ian","will",
     "skyler","kevin","charlie","ayush","derek","sam","asstumpy","jackson","jackson koenig","matt","sammy","taylor","oneassen","mumble mom","max haland","jon","mike warner",
-    "bartleby","himsel","dion a", "one half assen", "johnny", "johnny silktouch", "martin smith","charles terzian","justin","vishnu","hunter","murder black teen","nick barone",
+    "bartleby","himsel","dion a","one half assen","johnny","johnny silktouch","martin smith","charles terzian","justin","vishnu","hunter","murder black teen","nick barone",
     "kevin roland","dennis","sebastian","neetorin","cole","brad","texascole","fourchan","ran","ryne","colten","nebuchadnezzar","cody","wills parents"]
     text1 = rl_inBot(rx)
     text2 = rl_inBot(rx)
@@ -254,7 +253,7 @@ async def joey(rx):
 
 @bot.command(pass_context=True)
 async def succk(rx):
-    await bot.say("Like Succk on Facebook https://www.facebook.com/makesucckgreatagain/")
+    await bot.say("Like Succk on Facebook https://www.facebook.com/bigsucck/")
 
 @bot.command(pass_context=True)
 async def ro(rx):

@@ -10,7 +10,6 @@ def downloadTxt(location, channelName):
         strippedLines.append(line.strip('\n'))
     i = 0
     for line in strippedLines:
-        print(i)
         try:
             fileDir = os.path.dirname(os.path.realpath('__file__'))
             realPath = os.path.join(fileDir, channelName)
