@@ -184,7 +184,9 @@ async def ri(rx):
             await bot.send_file(rx.message.channel, fileCheck, content=rl_inBot(rx))
             break
         else:
+            print("{} doesn't exist!".format(fileCheck))
             pass
+    print("File not found.")
 
 @bot.command(pass_context=True)
 async def rp(rx):
