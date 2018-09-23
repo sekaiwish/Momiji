@@ -87,8 +87,8 @@ async def dump_text(rx):
                         continue
                     else:
                         file.write(url + "\n")
-                        print("downloaded {}".format(str(i)))
                         i += 1
+                        print("downloaded {}".format(str(i)))
                 except:
                     pass
             file.close()
@@ -173,19 +173,17 @@ async def ri(rx):
     except:
         #print("loading CC list failed... check file name/dir")
         CC = ["if u see this message joey fucked up"]
-
-    ext = [".jpg",".png",".gif",".jpeg"]
+    ext = [".jpg",".png",".gif",".jpeg",".webp"]
     folderPath = rx.message.channel.name
-    file_count = len(os.listdir(folderPath))
-    randFilePart = "000" + str(random.randint(1,file_count))
-    file = os.path.join(folderPath, randFilePart)
-    files = [file + extIterated for extIterated in ext]
-    for fileIt in files:
-        path = Path(fileIt)
-        if path.exists():
-            await bot.send_file(rx.message.channel, fileIt, content=rl_inBot(rx))
+    fileCount = len(os.listdir(folderPath))
+    randInt = str(random.randint(1,fileCount))
+    file = os.path.join(folderPath, randInt)
+    for i in ext:
+        fileCheck = file + i
+        if Path(fileCheck).exists():
+            await bot.send_file(rx.message.channel, fileCheck, content=rl_inBot(rx))
+            break
         else:
-            #print(fileIt + " does not exist")
             pass
 
 @bot.command(pass_context=True)
@@ -267,7 +265,7 @@ async def jhelp(rx):
 @bot.command(pass_context=True)
 async def setP(rx):
     if rx.message.author.id == "119094696487288833":
-        await bot.change_presence(game=discord.Game(name=rx.message.content))
+        await bot.change_presence(game=discord.Game(name=rx.message.content.strip(".setP ")))
 
 bot.change_presence(game=discord.Game(name=".jhelp for help"))
 bot.run("[REDACTED]")
