@@ -173,20 +173,12 @@ async def ri(rx):
     except:
         #print("loading CC list failed... check file name/dir")
         CC = ["if u see this message joey fucked up"]
-    ext = [".jpg",".png",".gif",".jpeg",".webp",".webm"]
-    folderPath = rx.message.channel.name
-    fileCount = len(os.listdir(folderPath))
-    randInt = str(random.randint(1, fileCount))
-    file = os.path.join(folderPath, randInt)
-    for i in ext:
-        fileCheck = file + i
-        if Path(fileCheck).exists():
-            await bot.send_file(rx.message.channel, fileCheck, content=rl_inBot(rx))
-            break
-        else:
-            print("{} doesn't exist!".format(fileCheck))
-            pass
-    print("File not found.")
+    directory = rx.message.channel.name
+    file = os.listdir(directory)[random.randint(1, len(os.listdir(directory)))]
+    try:
+        await bot.send_file(rx.message.channel, directory + file, content=rl_inBot(rx))
+    except:
+        print("File '{}' not found.".format(file))
 
 @bot.command(pass_context=True)
 async def rp(rx):
