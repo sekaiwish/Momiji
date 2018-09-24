@@ -14,26 +14,12 @@ if not os.path.exists("logs"):
 
 @bot.event
 async def on_ready():
-    print("I am running on " + bot.user.name)
-    print("with the ID " + bot.user.id)
+    print("I am running on {}\nwith the ID {}".format(bot.user.name, bot.user.id))
 
 @bot.command(pass_context=True)
 async def ping(rx):
     await bot.say(":ping_pong: pong!! xSSS")
     print("user has pinged")
-
-@bot.command(pass_context=True)
-async def info(rx, user: discord.Member):
-    await bot.say("The users name is: {}".format(user.name))
-    await bot.say("The users ID is: {}".format(user.id))
-    await bot.say("The users status is: {}".format(user.status))
-    await bot.say("The users highest role is: {}".format(user.top_role))
-    await bot.say("The user joined at: {}".format(user.joined_at))
-
-@bot.command(pass_context=True)
-async def kick(rx, user: discord.Member):
-    await bot.say(":boot: Cya, {}. Ya loser!".format(user.name))
-    await bot.kick(user)
 
 @bot.command(pass_context=True)
 async def dump(rx):
@@ -46,7 +32,7 @@ async def dump(rx):
                 print(int(rx.message.content.split(' ')[1]))
             except:
                 c = bot.logs_from(rx.message.channel, limit=10)
-            filename = "logs/discLogs_" + rx.message.channel.name + ".txt"
+            filename = "logs/{}img.txt".format(rx.message.channel.id)
             file = open(filename, 'w')
             async for message in c:
                 try:
@@ -56,10 +42,9 @@ async def dump(rx):
                 except:
                     pass
             file.close()
-            #await bot.say("done: " + str(i) + " pictures dumped to txt in: " + "\\" + "logs\\" + "discLogs_" + rx.message.channel.name + ".txt")
             await bot.say("downloading...")
-            downloadTxt(filename, rx.message.channel.name)
-            await bot.say("done downloading " + str(i) + " channel images.")
+            downloadTxt(filename, rx.message.channel.id)
+            await bot.say("done downloading {} channel images.".format(str(i)))
         else:
             await bot.say("sorry, not for u. :cry:")
     except:
@@ -76,7 +61,7 @@ async def dump_text(rx):
                 print(int(rx.message.content.split(' ')[1]))
             except:
                 c = bot.logs_from(rx.message.channel, limit=10)
-            filename = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
+            filename = "logs/{}.txt".format(rx.message.channel.id)
             await bot.say("logging... :gun: pew pew pew haha")
             file = open(filename, "w")
             async for message in c:
@@ -104,7 +89,7 @@ async def dump_text(rx):
 async def rl(rx):
     try:
         #cname = rx.message.channel.name
-        CC_add = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
+        CC_add = "logs/{}.txt".format(rx.message.channel.id)
         ccF = open(CC_add, 'r')
         CC = ccF.readlines()  # global
         ccF.close()
@@ -128,7 +113,7 @@ async def rl(rx):
 
 def rl_inBot(rx, twoLine = False):
     try:
-        CC_add = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
+        CC_add = "logs/{}.txt".format(rx.message.channel.id)
         ccF = open(CC_add, 'r')
         CC = ccF.readlines()  # global
         ccF.close()
@@ -149,7 +134,7 @@ def rl_inBot(rx, twoLine = False):
 
 @bot.command(pass_context=True)
 async def rt(rx):
-    CC_add = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
+    CC_add = "logs/{}.txt".format(rx.message.channel.id)
     with open(CC_add) as f:
         text = f.read()
     text_model = markovify.Text(text)
@@ -166,7 +151,7 @@ async def rt(rx):
 @bot.command(pass_context=True)
 async def ri(rx):
     try:
-        CC_add = "logs/discLogs_Text_" + rx.message.channel.name + ".txt"
+        CC_add = "logs/{}.txt".format(rx.message.channel.id)
         ccF = open(CC_add, "r")
         CC = ccF.readlines()  # global
         ccF.close()
