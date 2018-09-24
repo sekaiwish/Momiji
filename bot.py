@@ -158,7 +158,7 @@ async def ri(rx):
     except:
         #print("loading CC list failed... check file name/dir")
         CC = ["if u see this message joey fucked up"]
-    directory = rx.message.channel.name
+    directory = rx.message.channel.id
     file = os.listdir(directory)[random.randint(1, len(os.listdir(directory)))]
     try:
         await bot.send_file(rx.message.channel, "{}/{}".format(directory, file), content=rl_inBot(rx))
