@@ -102,26 +102,28 @@ async def rl(rx):
     except:
         limit = 1
     quotes = ""
-    if logs[rx.message.channel.id]:
-        for i in range(limit):
-            quotes += random.choice(logs[rx.message.channel.id])
-        try:
-            await bot.say(quotes)
-        except:
-            await bot.say("i made a fucky wucky")
-    elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
-        fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
-        log = fp.readlines()
-        fp.close()
-        for i in range(limit):
-            quotes += random.choice(log[rx.message.channel.id])
-        try:
-            await bot.say(quotes)
-        except:
-            await bot.say("i made a fucky wucky")
-    else:
+    try:
+        if logs[rx.message.channel.id]:
+            for i in range(limit):
+                quotes += random.choice(logs[rx.message.channel.id])
+            try:
+                await bot.say(quotes)
+            except:
+                await bot.say("i made a fucky wucky")
+        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
+            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+            log = fp.readlines()
+            fp.close()
+            for i in range(limit):
+                quotes += random.choice(log[rx.message.channel.id])
+            try:
+                await bot.say(quotes)
+            except:
+                await bot.say("i made a fucky wucky")
+        else:
+            await bot.say("your channel isnt a dump")
+    except KeyError:
         await bot.say("your channel isnt a dump")
-
 def rl_inBot(rx, twoLine = False):
     try:
         CC_add = "logs/{}.txt".format(rx.message.channel.id)
