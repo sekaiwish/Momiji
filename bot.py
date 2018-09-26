@@ -97,8 +97,8 @@ async def dump_text(rx):
 async def rl(rx):
     try:
         limit = int(rx.message.content.split(' ')[1])
-        if limit > 10:
-            limit = 10
+        if limit > 15:
+            limit = 15
     except:
         limit = 1
     quotes = ""
