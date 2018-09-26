@@ -9,8 +9,16 @@ from pathlib import Path
 from urltest import downloadTxt
 
 bot = commands.Bot(command_prefix=".")
+
 if not os.path.exists("logs"):
     os.makedirs("logs")
+logs = {}
+logFiles = os.listdir("logs")
+for log in range(0, len(logFiles)):
+    fp = open("logs/{}".format(logFiles[log]), "r")
+    logFile = logFiles[log][:-4]
+    logs[logFile] = fp.readlines()
+    fp.close()
 
 @bot.event
 async def on_ready():
@@ -88,28 +96,31 @@ async def dump_text(rx):
 @bot.command(pass_context=True)
 async def rl(rx):
     try:
-        #cname = rx.message.channel.name
-        CC_add = "logs/{}.txt".format(rx.message.channel.id)
-        ccF = open(CC_add, 'r')
-        CC = ccF.readlines()  # global
-        ccF.close()
-    except:
-        print("loading CC list failed... check file name/dir")
-        CC = ["u shouldnt see this.. :gun: "]
-    try:
         limit = int(rx.message.content.split(' ')[1])
         if limit > 10:
             limit = 10
     except:
-        limit=1
-    texts = ""
-    for i in range(limit):
-        texts += random.choice(CC)
-        texts += "\n"
-    try:
-        await bot.say(texts)
-    except:
-        pass
+        limit = 1
+    quotes = ""
+    if logs[rx.message.channel.id]:
+        for i in range(limit):
+            quotes += random.choice(logs[rx.message.channel.id])
+        try:
+            await bot.say(quotes)
+        except:
+            await bot.say("i made a fucky wucky")
+    elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
+        fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+        log = fp.readlines()
+        fp.close()
+        for i in range(limit):
+            quotes += random.choice(log[rx.message.channel.id])
+        try:
+            await bot.say(quotes)
+        except:
+            await bot.say("i made a fucky wucky")
+    else:
+        await bot.say("your channel isnt a dump")
 
 def rl_inBot(rx, twoLine = False):
     try:
@@ -156,12 +167,11 @@ async def ri(rx):
         CC = ccF.readlines()  # global
         ccF.close()
     except:
-        #print("loading CC list failed... check file name/dir")
-        CC = ["if u see this message joey fucked up"]
+        CC = ["if u see this message ~~joey~~ wish fucked up"]
     directory = rx.message.channel.id
-    file = os.listdir(directory)[random.randint(1, len(os.listdir(directory)))]
+    file = "{}/{}".format(directory, random.choice(os.listdir(directory)))
     try:
-        await bot.send_file(rx.message.channel, "{}/{}".format(directory, file), content=rl_inBot(rx))
+        await bot.send_file(rx.message.channel, file, content=rl_inBot(rx))
     except:
         print("File '{}' not found.".format(file))
 
