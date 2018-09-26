@@ -124,26 +124,20 @@ async def rl(rx):
             await bot.say("your channel isnt a dump")
     except KeyError:
         await bot.say("your channel isnt a dump")
-def rl_inBot(rx, twoLine = False):
+
+def rl_inBot(rx):
     try:
-        CC_add = "logs/{}.txt".format(rx.message.channel.id)
-        ccF = open(CC_add, 'r')
-        CC = ccF.readlines()  # global
-        ccF.close()
-    except:
-        print("loading CC list failed... check file name/dir")
-        CC = ["nah"]
-    if twoLine == True:
-        texts = ""
-        texts2 = ""
-        spot = random.randint(1, len(CC) - 1)
-        texts += CC[spot]
-        texts2 += CC[spot+1]
-        return texts, texts2
-    else:
-        texts = ""
-        texts += random.choice(CC)
-        return texts
+        if logs[rx.message.channel.id]:
+            return random.choice(logs[rx.message.channel.id])
+        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
+            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+            log = fp.readlines()
+            fp.close()
+            return random.choice(log[rx.message.channel.id])
+        else:
+            return "your channel isnt a dump"
+    except KeyError:
+        return "your channel isnt a dump"
 
 @bot.command(pass_context=True)
 async def rt(rx):
@@ -163,13 +157,6 @@ async def rt(rx):
 
 @bot.command(pass_context=True)
 async def ri(rx):
-    try:
-        CC_add = "logs/{}.txt".format(rx.message.channel.id)
-        ccF = open(CC_add, "r")
-        CC = ccF.readlines()  # global
-        ccF.close()
-    except:
-        CC = ["if u see this message ~~joey~~ wish fucked up"]
     directory = rx.message.channel.id
     file = "{}/{}".format(directory, random.choice(os.listdir(directory)))
     try:
