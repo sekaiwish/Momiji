@@ -166,10 +166,15 @@ async def ri(rx):
 
 @bot.command(pass_context=True)
 async def rp(rx):
-    names = ["bean","joey","jacob","nick","godfrey","steven","derek","kyle tamondong","roman","ben cimperman","anna","grant","jimmy","cole","max","dylan","kash","ian","will",
-    "skyler","kevin","charlie","ayush","derek","sam","asstumpy","jackson","jackson koenig","matt","sammy","taylor","oneassen","mumble mom","max haland","jon","mike warner",
-    "bartleby","himsel","dion a","one half assen","johnny","johnny silktouch","martin smith","charles terzian","justin","vishnu","hunter","murder black teen","nick barone",
-    "kevin roland","dennis","sebastian","neetorin","cole","brad","texascole","fourchan","ran","ryne","colten","nebuchadnezzar","cody","wills parents"]
+    if rx.message.server.id == "225424272825384960":
+        names = ["bean","joey","jacob","nick","godfrey","steven","derek","kyle tamondong","roman","ben cimperman","anna","grant","jimmy","cole","max","dylan","kash","ian","will",
+        "skyler","kevin","charlie","ayush","derek","sam","asstumpy","jackson","jackson koenig","matt","sammy","taylor","oneassen","mumble mom","max haland","jon","mike warner",
+        "bartleby","himsel","dion a","one half assen","johnny","johnny silktouch","martin smith","charles terzian","justin","vishnu","hunter","murder black teen","nick barone",
+        "kevin roland","dennis","sebastian","neetorin","cole","brad","texascole","fourchan","ran","ryne","colten","nebuchadnezzar","cody","wills parents"]
+    else:
+        names = []
+        for member in rx.message.server.members:
+            names.append(member.name)
     text1 = rl_inBot(rx)
     text2 = rl_inBot(rx)
     name1 = random.choice(names)
