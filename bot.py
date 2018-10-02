@@ -247,7 +247,7 @@ async def jhelp(rx):
 @bot.command(pass_context=True)
 async def setP(rx):
     if rx.message.author.id == "119094696487288833":
-        await bot.change_presence(game=discord.Game(name=rx.message.content.strip(".setP ")))
+        await bot.change_presence(game=discord.Game(name=rx.message.content[6:]))
 
 bot.change_presence(game=discord.Game(name=".jhelp for help"))
 bot.run("[REDACTED]")
