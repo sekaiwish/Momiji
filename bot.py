@@ -31,7 +31,7 @@ async def ping(rx):
     print("user has pinged")
 
 @bot.command(pass_context=True)
-def dump(rx):
+async def dump(rx):
     try:
         if rx.message.author.permissions_in(rx.message.channel).administrator:
             if not os.path.exists(rx.message.channel.id):
