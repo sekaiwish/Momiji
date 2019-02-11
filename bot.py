@@ -37,7 +37,7 @@ async def dump(rx):
             if not os.path.exists(rx.message.channel.id):
                 os.makedirs(rx.message.channel.id)
             i = 0
-            c = bot.logs_from(rx.message.channel, limit=100)
+            c = bot.logs_from(rx.message.channel, limit=100000)
             await bot.say("Downloading images...")
             async for message in c:
                 if message.author.bot:
@@ -59,7 +59,7 @@ async def dump(rx):
                     pass
             await bot.say("Collected {} images.".format(i))
             i = 0
-            c = bot.logs_from(rx.message.channel, limit=1000)
+            c = bot.logs_from(rx.message.channel, limit=100000)
             await bot.say("Downloading text...")
             file = open("logs/{}.txt".format(rx.message.channel.id), "w")
             async for message in c:
