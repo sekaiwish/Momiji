@@ -7,7 +7,6 @@ import random
 import markovify
 import requests
 from pathlib import Path
-from urltest import downloadTxt
 
 bot = commands.Bot(command_prefix=".")
 
@@ -44,18 +43,20 @@ async def dump(rx):
                     pass
                 elif message.attachments:
                     try:
-                        if not os.path.isfile("{}/{}.{}".format(rx.message.channel.id, message.id, ext)):
-                            url = message.attachments[0]["url"]
-                            ext = message.attachments[0]["filename"].split(".")[-1]
-                            r = requests.get(message.attachments[0]["url"], stream=True)
-                            with open("{}/{}.{}".format(rx.message.channel.id, message.id, ext), "wb") as fd:
-                                for chunk in r.iter_content(chunk_size=128):
-                                    fd.write(chunk)
+                        url = message.attachments[0]["url"]
+                        ext = message.attachments[0]["filename"].split(".")[-1]
+                        if os.path.isfile("{}/{}.{}".format(rx.message.channel.id, message.id, ext)):
                             i += 1
                             if i % 100 == 0:
                                 print("Downloaded {} images.".format(i))
-                        else:
                             pass
+                        r = requests.get(message.attachments[0]["url"], stream=True)
+                        with open("{}/{}.{}".format(rx.message.channel.id, message.id, ext), "wb") as fd:
+                            for chunk in r.iter_content(chunk_size=128):
+                                fd.write(chunk)
+                        i += 1
+                        if i % 100 == 0:
+                            print("Downloaded {} images.".format(i))
                     except:
                         pass
                 else:
@@ -75,7 +76,7 @@ async def dump(rx):
                     file.write(m + "\n")
                     i += 1
                     if i % 1000 == 0:
-                        print("Downloaded {} lines.".format(str(i)))
+                        print("Downloaded {} lines.".format(i))
             file.close()
             await bot.say("Collected {} lines of text.".format(i))
         else:
