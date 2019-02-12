@@ -49,7 +49,7 @@ async def dump(rx):
                             i += 1
                             if i % 100 == 0:
                                 print("Downloaded {} images.".format(i))
-                            pass
+                            continue
                         r = requests.get(message.attachments[0]["url"], stream=True)
                         with open("{}/{}.{}".format(rx.message.channel.id, message.id, ext), "wb") as fd:
                             for chunk in r.iter_content(chunk_size=128):
