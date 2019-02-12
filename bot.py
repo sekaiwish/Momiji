@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.5
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
@@ -6,13 +7,15 @@ import os
 import random
 import markovify
 import requests
+from subprocess import Popen
 from pathlib import Path
-from dump import dumper
 
-bot = commands.Bot(command_prefix=".")
-
-if not os.path.exists("logs"):
-    os.makedirs("logs")
+# Startup/Setup
+if not os.path.exists("queue"):
+    Path("queue").touch()
+log_path = Path("./logs")
+if not log_path.exists():
+    log_path.mkdir()
 logs = {}
 logFiles = os.listdir("logs")
 for log in range(0, len(logFiles)):
@@ -20,6 +23,12 @@ for log in range(0, len(logFiles)):
     logFile = logFiles[log][:-4]
     logs[logFile] = fp.readlines()
     fp.close()
+
+# Initialise dumping queue
+devnull = open(os.devnull, "wb")
+Popen(["nohup", "./dumpqueue.py"], stdout=devnull, stderr=devnull)
+
+bot = commands.Bot(command_prefix=".")
 
 @bot.event
 async def on_ready():
@@ -32,7 +41,49 @@ async def ping(rx):
 
 @bot.command(pass_context=True)
 async def dump(rx):
-    await dumper(rx, bot)
+    try:
+        if rx.message.author.permissions_in(rx.message.channel).administrator:
+            i = 0
+            c = bot.logs_from(rx.message.channel, limit=100000)
+            await bot.say("Queueing images...")
+            entries = ""
+            async for message in c:
+                if message.author.bot:
+                    pass
+                elif message.attachments:
+                    url = message.attachments[0]["url"]
+                    channel_id = message.channel.id
+                    message_id = message.id
+                    entries += "{} {} {}\n".format(url, channel_id, message_id)
+                    i += 1
+                else:
+                    pass
+            with open("queue", "a") as fp:
+                fp.write(entries)
+                fp.close()
+            await bot.say("Queued {} images.".format(i))
+            i = 0
+            c = bot.logs_from(rx.message.channel, limit=100000)
+            await bot.say("Downloading text...")
+            file = open("logs/{}.txt".format(rx.message.channel.id), "w")
+            async for message in c:
+                m = message.content
+                if m == "":
+                    pass
+                elif message.author.bot:
+                    pass
+                else:
+                    file.write(m + "\n")
+                    i += 1
+                    if i % 1000 == 0:
+                        print("Downloaded {} lines.".format(i))
+            file.close()
+            await bot.say("Collected {} lines of text.".format(i))
+        else:
+            await bot.say("Administrator only.")
+    except:
+        pass
+
 
 @bot.command(pass_context=True)
 async def rl(rx):
