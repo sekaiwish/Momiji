@@ -44,15 +44,18 @@ async def dump(rx):
                     pass
                 elif message.attachments:
                     try:
-                        url = message.attachments[0]["url"]
-                        ext = message.attachments[0]["filename"].split(".")[-1]
-                        r = requests.get(message.attachments[0]["url"], stream=True)
-                        with open("{}/{}.{}".format(rx.message.channel.id, message.id, ext), "wb") as fd:
-                            for chunk in r.iter_content(chunk_size=128):
-                                fd.write(chunk)
-                        i += 1
-                        if i % 100 == 0:
-                            print("Downloaded {} images.".format(i))
+                        if not os.path.isfile("{}/{}.{}".format(rx.message.channel.id, message.id, ext)):
+                            url = message.attachments[0]["url"]
+                            ext = message.attachments[0]["filename"].split(".")[-1]
+                            r = requests.get(message.attachments[0]["url"], stream=True)
+                            with open("{}/{}.{}".format(rx.message.channel.id, message.id, ext), "wb") as fd:
+                                for chunk in r.iter_content(chunk_size=128):
+                                    fd.write(chunk)
+                            i += 1
+                            if i % 100 == 0:
+                                print("Downloaded {} images.".format(i))
+                        else:
+                            pass
                     except:
                         pass
                 else:
