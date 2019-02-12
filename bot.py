@@ -40,7 +40,7 @@ async def dump(rx):
                     await bot.say("Downloading text...")
                     file = open("logs/{}.txt".format(rx.message.channel.id), "w")
                     async for message in c:
-                        m = message.clean_content
+                        m = message.content
                         if m == "":
                             pass
                         elif message.author.bot:
@@ -89,7 +89,7 @@ async def dump(rx):
                 await bot.say("Downloading text...")
                 file = open("logs/{}.txt".format(rx.message.channel.id), "w")
                 async for message in c:
-                    m = message.clean_content
+                    m = message.content
                     if m == "":
                         pass
                     elif message.author.bot:
