@@ -42,19 +42,17 @@ async def ping(rx):
 @bot.command(pass_context=True)
 async def dump(rx):
     try:
-        if rx.message.author.permissions_in(rx.message.channel).administrator:
+        if rx.message.author.permissions_in(rx.message.channel).administrator or rx.message.author.id == "119094696487288833":
             i = 0
             c = bot.logs_from(rx.message.channel, limit=100000)
             await bot.say("Queueing images...")
             entries = ""
             async for message in c:
                 if message.author.bot:
-                    pass
+                    continue
                 elif message.attachments:
                     url = message.attachments[0]["url"]
-                    channel_id = message.channel.id
-                    message_id = message.id
-                    entries += "{} {} {}\n".format(url, channel_id, message_id)
+                    entries += "{} {} {}\n".format(url, message.channel.id, message.id)
                     i += 1
                 else:
                     pass
@@ -171,11 +169,10 @@ async def rp(rx):
     text2 = rl_inBot(rx)
     name1 = random.choice(names)
     name2 = random.choice(names)
-    final = ""
     if name1 == name2:
-        final += name1 + ": " + text1 + "\n" + "also " + name2 + " : " + text2
+        final = "{}: {}\nalso {}: {}".format(name1, text1, name2, text2)
     else:
-        final += name1 + ": " + text1 + "\n" + name2 + " : " + text2
+        final = "{}: {}\n{}: {}".format(name1, text1, name2, text2)
     await bot.say(final)
 
 @bot.command(pass_context=True)
