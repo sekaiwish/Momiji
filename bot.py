@@ -105,7 +105,7 @@ async def rl(rx):
             log = fp.readlines()
             fp.close()
             for i in range(limit):
-                quotes += random.choice(log[rx.message.channel.id])
+                quotes += random.choice(log)
             try:
                 await bot.say(quotes)
             except:
@@ -123,7 +123,7 @@ def rl_inBot(rx):
             fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
             log = fp.readlines()
             fp.close()
-            return random.choice(log[rx.message.channel.id])
+            return random.choice(log)
         else:
             return "your channel isnt a dump"
     except KeyError:
