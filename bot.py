@@ -35,11 +35,6 @@ async def on_ready():
     print("I am running on {}\nwith the ID {}".format(bot.user.name, bot.user.id))
 
 @bot.command(pass_context=True)
-async def ping(rx):
-    await bot.say(":ping_pong: pong!! xSSS")
-    print("user has pinged")
-
-@bot.command(pass_context=True)
 async def dump(rx):
     try:
         if rx.message.author.permissions_in(rx.message.channel).administrator or rx.message.author.id == "119094696487288833":
@@ -99,7 +94,7 @@ async def rl(rx):
             try:
                 await bot.say(quotes)
             except:
-                await bot.say("i made a fucky wucky")
+                await bot.say("Awoo... an error has occurred.")
         elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
             fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
             log = fp.readlines()
@@ -109,11 +104,11 @@ async def rl(rx):
             try:
                 await bot.say(quotes)
             except:
-                await bot.say("i made a fucky wucky")
+                await bot.say("Awoo... an error has occurred.")
         else:
-            await bot.say("your channel isnt a dump")
+            await bot.say("Awoo... this channel has not been dumped.")
     except KeyError:
-        await bot.say("your channel isnt a dump")
+        await bot.say("Awoo... this channel has not been dumped.")
 
 def rl_inBot(rx):
     try:
@@ -125,9 +120,9 @@ def rl_inBot(rx):
             fp.close()
             return random.choice(log)
         else:
-            return "your channel isnt a dump"
+            return "Awoo... this channel has not been dumped."
     except KeyError:
-        return "your channel isnt a dump"
+        return "Awoo... this channel has not been dumped."
 
 @bot.command(pass_context=True)
 async def rt(rx):
@@ -156,15 +151,9 @@ async def ri(rx):
 
 @bot.command(pass_context=True)
 async def rp(rx):
-    if rx.message.server.id == "225424272825384960":
-        names = ["bean","joey","jacob","nick","godfrey","steven","derek","kyle tamondong","roman","ben cimperman","anna","grant","jimmy","cole","max","dylan","kash","ian","will",
-        "skyler","kevin","charlie","ayush","derek","sam","asstumpy","jackson","jackson koenig","matt","sammy","taylor","oneassen","mumble mom","max haland","jon","mike warner",
-        "bartleby","himsel","dion a","one half assen","johnny","johnny silktouch","martin smith","charles terzian","justin","vishnu","hunter","murder black teen","nick barone",
-        "kevin roland","dennis","sebastian","neetorin","cole","brad","texascole","fourchan","ran","ryne","colten","nebuchadnezzar","cody","wills parents"]
-    else:
-        names = []
-        for member in rx.message.server.members:
-            names.append(member.name)
+    names = []
+    for member in rx.message.server.members:
+        names.append(member.name)
     text1 = rl_inBot(rx)
     text2 = rl_inBot(rx)
     name1 = random.choice(names)
@@ -174,64 +163,6 @@ async def rp(rx):
     else:
         final = "{}: {}\n{}: {}".format(name1, text1, name2, text2)
     await bot.say(final)
-
-@bot.command(pass_context=True)
-async def grant(rx):
-    if rx.message.author.id == "160624126480875520":
-        await bot.say("ah yes me too grant")
-    else:
-        await bot.say("sorry....... kid,,,..")
-
-@bot.command(pass_context=True)
-async def jacob(rx):
-    if rx.message.author.id == "214450788326440961":
-        await bot.say("planes vRRRRROoom")
-    else:
-        await bot.say("nah nigga")
-
-@bot.command(pass_context=True)
-async def p(rx):
-    await bot.say("this command is depreciated :gun: ass Hole :gun: gun:")
-
-@bot.command(pass_context=True)
-async def steveo(rx):
-    if rx.message.author.id == "119094696487288833":
-        await bot.say("java scripyt")
-    else:
-        await bot.say("sorr. y nah")
-
-@bot.command(pass_context=True)
-async def kash(rx):
-    if rx.message.author.id == "221067695964028929":
-        await bot.say("when i die bury me inside a gucci coffin")
-    else:
-        await bot.say("u dont deserve kash buddy")
-
-@bot.command(pass_context=True)
-async def ayush(rx):
-    if rx.message.author.id == "116668711414398978":
-        await bot.say("hahah yyyeaahhhh")
-    else:
-        await bot.say("haha wait")
-
-@bot.command(pass_context=True)
-async def joey(rx):
-    if rx.message.author.id == "133784395612946432":
-        await bot.say("path of, esile")
-    else:
-        await bot.say("its a shame bc i coded this for myself so its like nobody can even see what it says for me unless i show them anyways...")
-
-@bot.command(pass_context=True)
-async def succk(rx):
-    await bot.say("Like Succk on Facebook https://www.facebook.com/bigsucck/")
-
-@bot.command(pass_context=True)
-async def ro(rx):
-    await bot.say(" grant u dumapss its dotrp not ro u musta mispress interestinf :gun:")
-
-@bot.command(pass_context=True)
-async def jhelp(rx):
-    await bot.say(".rl, .rt, .ri, .rp. ||| .joey, .steveo, .grant, .jacob ||| .p, .succk ||| [backend only] .dump, dump_text, .setP")
 
 @bot.command(pass_context=True)
 async def setP(rx):
