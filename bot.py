@@ -35,12 +35,12 @@ async def on_ready():
     print("I am running on {}\nwith the ID {}".format(bot.user.name, bot.user.id))
 
 @bot.event
-async def on_member_ban(guild, user):
+async def on_member_ban(event):
     try:
-        for channel in guild.channels:
+        for channel in event.guild.channels:
             c = bot.logs_from(channel, limit=200000)
             async for message in c:
-                if message.author == user:
+                if message.author == event.user:
                     message.delete()
     except:
         pass
