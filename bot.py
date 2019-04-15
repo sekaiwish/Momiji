@@ -17,11 +17,11 @@ log_path = Path("./logs")
 if not log_path.exists():
     log_path.mkdir()
 logs = {}
-logFiles = os.listdir("logs")
-for log in range(0, len(logFiles)):
-    fp = open("logs/{}".format(logFiles[log]), "r")
-    logFile = logFiles[log][:-4]
-    logs[logFile] = fp.readlines()
+log_files = os.listdir("logs")
+for log in range(0, len(log_files)):
+    fp = open("logs/{}".format(log_files[log]), "r")
+    log_file = log_files[log][:-4]
+    logs[log_file] = fp.readlines()
     fp.close()
 
 # Initialise dumping queue
@@ -33,6 +33,17 @@ bot = commands.Bot(command_prefix=".")
 @bot.event
 async def on_ready():
     print("I am running on {}\nwith the ID {}".format(bot.user.name, bot.user.id))
+
+@bot.event
+async def on_member_ban(guild, user):
+    try:
+        for channel in guild.channels:
+            c = bot.logs_from(channel, limit=200000)
+            async for message in c:
+                if message.author == user:
+                    message.delete()
+    except:
+        pass
 
 @bot.command(pass_context=True)
 async def dump(rx):
@@ -126,19 +137,24 @@ def rl_inBot(rx):
 
 @bot.command(pass_context=True)
 async def rt(rx):
-    CC_add = "logs/{}.txt".format(rx.message.channel.id)
-    with open(CC_add) as f:
-        text = f.read()
-    text_model = markovify.Text(text)
     try:
-        lengthIn = int(rx.message.content.split(' ')[1])
-        if lengthIn > 2000:
-            limit = 2000
-    except:
-        lengthIn = 200
-
-    line = text_model.make_short_sentence(lengthIn)
-    await bot.say(line)
+        if logs[rx.message.channel.id]:
+            text = "".join(logs[rx.message.channel.id])
+        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
+            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+            text = fp.read()
+            fp.close()
+        else:
+            await bot.say("Awoo... this channel has not been dumped.")
+        try:
+            samples = int(rx.message.content.split(' ')[1])
+            if samples > 2000:
+                samples = 2000
+        except:
+            samples = 200
+        await bot.say(markovify.Text(text).make_short_sentence(samples))
+    except KeyError:
+        await bot.say("Awoo... this channel has not been dumped.")
 
 @bot.command(pass_context=True)
 async def ri(rx):
