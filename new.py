@@ -74,5 +74,37 @@ async def dump(rx):
     except:
         pass
 
+@bot.command()
+async def rl(rx):
+    try:
+        limit = int(rx.message.content.split(' ')[1])
+        if limit > 15:
+            limit = 15
+    except:
+        limit = 1
+    quotes = ""
+    try:
+        if logs[rx.message.channel.id]:
+            for i in range(limit):
+                quotes += random.choice(logs[rx.message.channel.id])
+            try:
+                await rx.send(quotes)
+            except:
+                await rx.send("Awoo... an error has occurred.")
+        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
+            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+            log = fp.readlines()
+            fp.close()
+            for i in range(limit):
+                quotes += random.choice(log)
+            try:
+                await rx.send(quotes)
+            except:
+                await rx.send("Awoo... an error has occurred.")
+        else:
+            await rx.send("Awoo... this channel has not been dumped.")
+    except KeyError:
+        await rx.send("Awoo... this channel has not been dumped.")
+
 bot.run("[REDACTED]")
 #bot.change_presence(status=discord.Status.online, activity=discord.Game("pee"))
