@@ -73,5 +73,5 @@ async def dump(rx):
     except:
         pass
 
-await bot.start("[REDACTED]")
-await bot.change_presence(status=discord.Status.online, game=discord.Game("pee"))
+bot.start("[REDACTED]")
+bot.change_presence(status=discord.Status.online, game=discord.Game("pee"))
