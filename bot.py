@@ -145,7 +145,8 @@ async def rt(rx):
 @bot.command()
 async def ri(rx):
     directory = str(rx.message.channel.id)
-    file = f"{directory}/{random.choice(os.listdir(directory)}"
+    image = random.choice(os.listdir(directory))
+    file = f"{directory}/{image}"
     try:
         await rx.send(file=discord.File(file), content=rl_inBot(rx))
     except:
