@@ -45,8 +45,7 @@ async def dump(rx):
                     continue
                 elif message.attachments:
                     for a in message.attachments:
-                        url = message.attachments[a].url
-                        entries += "{} {} {}\n".format(url, str(message.channel.id), str(message.id))
+                        entries += "{} {} {}\n".format(a.url, str(message.channel.id), str(message.id))
                         i += 1
                 else:
                     pass
