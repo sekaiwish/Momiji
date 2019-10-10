@@ -158,7 +158,7 @@ async def rt(rx):
 
 @bot.command(pass_context=True)
 async def ri(rx):
-    directory = rx.message.channel.id
+    directory = str(rx.message.channel.id)
     file = "{}/{}".format(directory, random.choice(os.listdir(directory)))
     try:
         await bot.send_file(rx.message.channel, file, content=rl_inBot(rx))
