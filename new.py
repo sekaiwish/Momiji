@@ -84,9 +84,9 @@ async def rl(rx):
         limit = 1
     quotes = ""
     try:
-        if logs[rx.message.channel.id]:
+        if logs[str(rx.message.channel.id)]:
             for i in range(limit):
-                quotes += random.choice(logs[rx.message.channel.id])
+                quotes += random.choice(logs[str(rx.message.channel.id)])
             try:
                 await rx.send(quotes)
             except:
