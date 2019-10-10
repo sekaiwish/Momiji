@@ -141,5 +141,14 @@ async def rt(rx):
     except KeyError:
         await rx.send("Awoo... this channel has not been dumped.")
 
+@bot.command()
+async def ri(rx):
+    directory = str(rx.message.channel.id)
+    file = "{}/{}".format(directory, random.choice(os.listdir(directory)))
+    try:
+        await rx.send(file=discord.File(filename=file), content=rl_inBot(rx))
+    except:
+        print("File '{}' not found.".format(file))
+
 bot.run("[REDACTED]")
 #bot.change_presence(status=discord.Status.online, activity=discord.Game("pee"))
