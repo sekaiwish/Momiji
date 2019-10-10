@@ -1,4 +1,3 @@
-#!/usr/bin/env python3.5
 import requests
 import time
 from pathlib import Path
