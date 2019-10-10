@@ -39,7 +39,8 @@ async def dump(rx):
             i = 0
             await rx.send("Queueing images...")
             entries = ""
-            async for message in rx.message.channel.history():
+            c = await rx.message.channel.history().flatten()
+            for message in c:
                 if message.author.bot:
                     continue
                 elif message.attachments:
@@ -55,7 +56,7 @@ async def dump(rx):
             i = 0
             await rx.send("Downloading text...")
             file = open("logs/{}.txt".format(rx.message.channel.id), "w")
-            async for message in rx.message.channel.history():
+            for message in c:
                 m = message.content
                 if m == "":
                     pass
