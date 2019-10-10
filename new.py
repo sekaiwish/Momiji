@@ -44,9 +44,10 @@ async def dump(rx):
                 if message.author.bot:
                     continue
                 elif message.attachments:
-                    url = message.attachments[0]["url"]
-                    entries += "{} {} {}\n".format(url, str(message.channel.id), str(message.id))
-                    i += 1
+                    for a in message.attachments:
+                        url = message.attachments[a].url
+                        entries += "{} {} {}\n".format(url, str(message.channel.id), str(message.id))
+                        i += 1
                 else:
                     pass
             with open("queue", "a") as fp:
