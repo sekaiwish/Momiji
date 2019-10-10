@@ -17,7 +17,7 @@ if not log_path.exists():
 logs = {}
 log_files = os.listdir("logs")
 for log in range(0, len(log_files)):
-    fp = open("logs/{}".format(log_files[log]), "r")
+    fp = open(f"logs/{log_files[log]}", "r")
     log_file = log_files[log][:-4]
     logs[log_file] = fp.readlines()
     fp.close()
@@ -30,7 +30,7 @@ bot = commands.Bot(command_prefix=".", owner_id=119094696487288833)
 
 @bot.event
 async def on_ready():
-    print("I am running on {}\nwith the ID {}".format(bot.user.name, str(bot.user.id)))
+    print(f"I am running on {bot.user.name}\nwith the ID {bot.user.id}")
     await bot.change_presence(status=discord.Status.online, activity=discord.Game("pee"))
 
 @bot.command()
@@ -46,7 +46,7 @@ async def dump(rx):
                     continue
                 elif message.attachments:
                     for a in message.attachments:
-                        entries += "{} {} {}\n".format(a.url, str(message.channel.id), str(message.id))
+                        entries += f"{a.url} {message.channel.id} {message.id}\n"
                         i += 1
                 else:
                     pass
@@ -56,7 +56,7 @@ async def dump(rx):
             await rx.send("Queued {} images.".format(i))
             i = 0
             await rx.send("Downloading text...")
-            file = open("logs/{}.txt".format(rx.message.channel.id), "w")
+            file = open(f"logs/{rx.message.channel.id}.txt", "w")
             for message in c:
                 m = message.content
                 if m == "":
@@ -92,8 +92,8 @@ async def rl(rx):
                 await rx.send(quotes)
             except:
                 await rx.send("Awoo... an error has occurred.")
-        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
-            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+        elif os.path.exists(f"logs/{rx.message.channel.id}.txt"):
+            fp = open(f"logs/{rx.message.channel.id}.txt", "r")
             log = fp.readlines()
             fp.close()
             for i in range(limit):
@@ -111,8 +111,8 @@ def rl_inBot(rx):
     try:
         if logs[str(rx.message.channel.id)]:
             return random.choice(logs[str(rx.message.channel.id)])
-        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
-            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+        elif os.path.exists(f"logs/{rx.message.channel.id}.txt"):
+            fp = open(f"logs/{rx.message.channel.id}.txt", "r")
             log = fp.readlines()
             fp.close()
             return random.choice(log)
@@ -126,8 +126,8 @@ async def rt(rx):
     try:
         if logs[str(rx.message.channel.id)]:
             text = "".join(logs[str(rx.message.channel.id)])
-        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
-            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+        elif os.path.exists(f"logs/{rx.message.channel.id}.txt"):
+            fp = open(f"logs/{rx.message.channel.id}.txt", "r")
             text = fp.read()
             fp.close()
         else:
@@ -145,11 +145,11 @@ async def rt(rx):
 @bot.command()
 async def ri(rx):
     directory = str(rx.message.channel.id)
-    file = "{}/{}".format(directory, random.choice(os.listdir(directory)))
+    file = f"{directory}/{random.choice(os.listdir(directory)}"
     try:
         await rx.send(file=discord.File(file), content=rl_inBot(rx))
     except:
-        print("File '{}' not found.".format(file))
+        print(f"File '{file}' not found.")
 
 @bot.command()
 async def rp(rx):
@@ -161,9 +161,9 @@ async def rp(rx):
     name1 = random.choice(names)
     name2 = random.choice(names)
     if name1 == name2:
-        final = "{}: {}\nalso {}: {}".format(name1, text1, name2, text2)
+        final = f"{name1}: {text1}\nalso {name2}: {text2}"
     else:
-        final = "{}: {}\n{}: {}".format(name1, text1, name2, text2)
+        final = f"{name1}: {text1}\n{name2}: {text2}"
     await rx.send(final)
 
 bot.run("[REDACTED]")
