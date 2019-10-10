@@ -150,5 +150,20 @@ async def ri(rx):
     except:
         print("File '{}' not found.".format(file))
 
+@bot.command()
+async def rp(rx):
+    names = []
+    for member in rx.guild.members:
+        names.append(member.name)
+    text1 = rl_inBot(rx)
+    text2 = rl_inBot(rx)
+    name1 = random.choice(names)
+    name2 = random.choice(names)
+    if name1 == name2:
+        final = "{}: {}\nalso {}: {}".format(name1, text1, name2, text2)
+    else:
+        final = "{}: {}\n{}: {}".format(name1, text1, name2, text2)
+    await rx.send(final)
+
 bot.run("[REDACTED]")
 #bot.change_presence(status=discord.Status.online, activity=discord.Game("pee"))
