@@ -106,5 +106,40 @@ async def rl(rx):
     except KeyError:
         await rx.send("Awoo... this channel has not been dumped.")
 
+def rl_inBot(rx):
+    try:
+        if logs[str(rx.message.channel.id)]:
+            return random.choice(logs[str(rx.message.channel.id)])
+        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
+            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+            log = fp.readlines()
+            fp.close()
+            return random.choice(log)
+        else:
+            return "Awoo... this channel has not been dumped."
+    except KeyError:
+        return "Awoo... this channel has not been dumped."
+
+@bot.command()
+async def rt(rx):
+    try:
+        if logs[str(rx.message.channel.id)]:
+            text = "".join(logs[str(rx.message.channel.id)])
+        elif os.path.exists("logs/{}.txt".format(rx.message.channel.id)):
+            fp = open("logs/{}.txt".format(rx.message.channel.id), "r")
+            text = fp.read()
+            fp.close()
+        else:
+            await rx.send("Awoo... this channel has not been dumped.")
+        try:
+            samples = int(rx.message.content.split(' ')[1])
+            if samples > 2000:
+                samples = 2000
+        except:
+            samples = 200
+        await rx.send(markovify.Text(text).make_short_sentence(samples))
+    except KeyError:
+        await rx.send("Awoo... this channel has not been dumped.")
+
 bot.run("[REDACTED]")
 #bot.change_presence(status=discord.Status.online, activity=discord.Game("pee"))
