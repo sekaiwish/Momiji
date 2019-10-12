@@ -70,6 +70,10 @@ async def dump(rx):
                         print("Downloaded {} lines.".format(i))
             file.close()
             await rx.send("Collected {} lines of text.".format(i))
+            log = str(rx.message.channel.id) + ".txt"
+            fp = open(f"logs/{log}", "r")
+            logs[str(rx.message.channel.id)] = fp.readlines()
+            fp.close()
         else:
             await rx.send("Administrator only.")
     except:
