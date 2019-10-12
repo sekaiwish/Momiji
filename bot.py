@@ -40,7 +40,7 @@ async def dump(rx):
             i = 0
             await rx.send("Queueing images...")
             entries = ""
-            c = await rx.message.channel.history().flatten()
+            c = await rx.message.channel.history(limit=None).flatten()
             for message in c:
                 if message.author.bot:
                     continue
