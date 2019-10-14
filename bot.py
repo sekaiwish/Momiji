@@ -5,6 +5,7 @@ import os
 import random
 import markovify
 import requests
+import re
 from subprocess import Popen
 from pathlib import Path
 
@@ -31,7 +32,7 @@ bot = commands.Bot(command_prefix=".", owner_id=119094696487288833)
 @bot.event
 async def on_ready():
     print(f"I am running on {bot.user.name}\nwith the ID {bot.user.id}")
-    await bot.change_presence(status=discord.Status.online, activity=discord.Game("pee"))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="you."))
 
 @bot.command()
 async def dump(rx):
@@ -57,11 +58,14 @@ async def dump(rx):
             i = 0
             await rx.send("Downloading text...")
             file = open(f"logs/{rx.message.channel.id}.txt", "w")
+            skip = "^(\.\w|t!).+$"
             for message in c:
                 m = message.content
                 if m == "":
                     pass
                 elif message.author.bot:
+                    pass
+                elif re.search(skip, m) not None:
                     pass
                 else:
                     file.write(m + "\n")
