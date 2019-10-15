@@ -5,7 +5,6 @@ import os
 import random
 import markovify
 import requests
-import re
 from subprocess import Popen
 from pathlib import Path
 
@@ -58,14 +57,11 @@ async def dump(rx):
             i = 0
             await rx.send("Downloading text...")
             file = open(f"logs/{rx.message.channel.id}.txt", "w")
-            skip = "^(\.\w|t!).+$"
             for message in c:
                 m = message.content
                 if m == "":
                     pass
                 elif message.author.bot:
-                    pass
-                elif re.search(skip, m) not None:
                     pass
                 else:
                     file.write(m + "\n")
@@ -155,6 +151,11 @@ async def ri(rx):
     directory = str(rx.message.channel.id)
     image = random.choice(os.listdir(directory))
     file = f"{directory}/{image}"
+    boring = [".ri", ".rl", ".rt", "t!help", "t!slots"]
+    while True:
+        message = rl_inBot(rx)
+        if message not in boring:
+            break
     try:
         await rx.send(file=discord.File(file), content=rl_inBot(rx))
     except:
