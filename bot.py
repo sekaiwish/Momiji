@@ -4,7 +4,6 @@ import asyncio
 import os
 import random
 import markovify
-import typing
 from subprocess import Popen
 from pathlib import Path
 
@@ -48,7 +47,7 @@ for guild in os.scandir("user"):
 #devnull = open(os.devnull, "wb")
 Popen(["python", "dumpqueue.py"])
 
-bot = commands.Bot(command_prefix=";", owner_id=119094696487288833)
+bot = commands.Bot(command_prefix=".", owner_id=119094696487288833)
 
 @bot.event
 async def on_ready():
@@ -183,17 +182,17 @@ async def rm_error(rx, error):
         await rx.send("Awoo... user not found.")
 
 @bot.command()
-async def rt(rx, *samples):
+async def rt(rx, *max_chars):
     try:
-        if samples:
-            if int(samples[0]) > 2000:
-                samples = 2000
+        if max_chars:
+            if int(max_chars[0]) > 2000:
+                max_chars = 2000
             else:
-                samples = int(samples[0])
+                max_chars = int(max_chars[0])
         else:
-            samples = 200
+            max_chars = 200
     except ValueError:
-        samples = 200
+        max_chars = 200
     try:
         if guilds[rx.message.channel.id]:
             text = "".join(guilds[rx.message.channel.id])
@@ -205,7 +204,7 @@ async def rt(rx, *samples):
         else:
             await rx.send("Awoo... this channel has not been dumped.")
     if text:
-        await rx.send(markovify.Text(text).make_short_sentence(samples))
+        await rx.send(markovify.Text(text).make_short_sentence(max_chars))
 
 @bot.command()
 async def ri(rx):
