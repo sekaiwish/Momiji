@@ -1,3 +1,5 @@
-logs*
 *pycache*
-token*
+token
+queue
+guild*
+user*
