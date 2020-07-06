@@ -40,6 +40,7 @@ for guild in os.scandir("user"):
     for user in os.scandir(guild):
         fp = open(f"user/{guild.name}/{user.name}", "r")
         user_id = int(user.name[:-4])
+        print(f"{user.name} {guild.name}")
         users[int(guild.name)] = {}
         users[int(guild.name)][user_id] = fp.readlines()
         fp.close()
@@ -106,13 +107,14 @@ async def collect(rx, *, user: discord.Member=-1):
         pass
     else:
         await rx.send("You are not allowed to collect from other members.")
+        return
     try:
         print(f"Now collecting messages for {str(user)} ({user.id})")
         guild_path = Path(f"user/{rx.message.guild.id}")
         if not guild_path.exists():
             guild_path.mkdir()
         file = open(f"user/{rx.message.guild.id}/{user.id}.txt", "w")
-        await rx.send("Collecting messages...")
+        await rx.send("Collecting messages... (this can take up to an hour!)")
         for channel in rx.guild.text_channels:
             if channel.permissions_for(rx.message.guild.me).read_message_history:
                 async for message in channel.history(limit=None):
@@ -123,12 +125,17 @@ async def collect(rx, *, user: discord.Member=-1):
                         else:
                             file.write(f"{m}\n")
         file.close()
-        await rx.send("Messages collected.")
+        await rx.send(f"Messages collected for {str(user)}.")
         fp = open(f"user/{rx.message.guild.id}/{user.id}", "r")
         users[user.id] = fp.readlines()
         fp.close()
     except:
         pass
+
+@collect.error
+async def collect_error(rx, error):
+    if isinstance(error, commands.BadArgument):
+        await rx.send("Awoo... user not found.")
 
 @bot.command()
 async def rl(rx, *limit):
@@ -144,16 +151,16 @@ async def rl(rx, *limit):
         limit = 1
     quotes = ""
     for i in range(limit):
-        quotes += get_random_quote(rx)
+        quotes += get_random_quote(rx.channel.id)
     await rx.send(quotes)
 
-def get_random_quote(rx):
+def get_random_quote(channel):
     try:
-        if guilds[rx.message.channel.id]:
-            return random.choice(guilds[rx.message.channel.id])
+        if guilds[channel]:
+            return random.choice(guilds[channel])
     except KeyError:
-        if os.path.exists(f"guild/{rx.message.channel.id}.txt"):
-            fp = open(f"guild/{rx.message.channel.id}.txt", "r")
+        if os.path.exists(f"guild/{channel}.txt"):
+            fp = open(f"guild/{channel}.txt", "r")
             log = fp.readlines()
             fp.close()
             return random.choice(log)
@@ -175,7 +182,7 @@ async def rm(rx, *, user: discord.Member=-1):
         else:
             await rx.send("Awoo... this user has not been researched.")
     if text:
-        await rx.send(markovify.Text(text).make_sentence())
+        await rx.send(markovify.Text(text).make_short_sentence(250))
 
 @rm.error
 async def rm_error(rx, error):
@@ -208,13 +215,17 @@ async def rt(rx, *max_chars):
         await rx.send(markovify.Text(text).make_short_sentence(max_chars))
 
 @bot.command()
-async def ri(rx):
-    directory = str(rx.message.channel.id)
+async def ri(rx, *, channel: discord.TextChannel=-1):
+    if channel == -1:
+        channel = rx.channel.id
+    else:
+        channel = channel.id
+    directory = "guild/" + str(channel)
     image = random.choice(os.listdir(directory))
-    file = f"guild/{directory}/{image}"
+    file = f"{directory}/{image}"
     boring = {".ri", ".rl", ".rt", "t!help", "t!slots"}
     while True:
-        message = get_random_quote(rx)
+        message = get_random_quote(channel)
         if message not in boring:
             break
     try:
@@ -222,13 +233,18 @@ async def ri(rx):
     except:
         print(f"File '{file}' not accessible.")
 
+@ri.error
+async def ri_error(rx, error):
+    if isinstance(error, commands.BadArgument):
+        await rx.send("Awoo... channel not found.")
+
 @bot.command()
 async def rp(rx):
     names = []
     for member in rx.guild.members:
         names.append(member.name)
-    text1 = get_random_quote(rx)
-    text2 = get_random_quote(rx)
+    text1 = get_random_quote(rx.channel.id)
+    text2 = get_random_quote(rx.channel.id)
     name1 = random.choice(names)
     name2 = random.choice(names)
     if name1 == name2:
