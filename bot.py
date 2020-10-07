@@ -64,7 +64,6 @@ async def verify_count(rx):
                 await rx.author.send(f"Cannot test in a non-counting channel. Channel name: '{rx.message.channel.name}'.\n" +
                                      "Change the channel name to '#counting' or edit the allowed names in bot.py.")
                 return
-
             test_log = ""
             await rx.author.send("Starting counting channel tests.")
             await rx.message.delete()
@@ -78,19 +77,14 @@ async def verify_count(rx):
                     except ValueError as verr:
                         test_log += f"Error at message {message.author}:\"{message.content}\", position {pos}: Non-int text\n"
                         body = pos
-
                     if body != pos + mistake_offset:
                         test_log += f"Error at message {message.author}:\"{message.content}\", position {pos}: Text order mismatch\n"
                         mistake_offset = (body - pos)
-
                     if message.author == c[pos].author:
                         test_log += f"Error at message {c[pos].author}:\"{c[pos].content}\", position {pos+1}: Double posting\n"
-
-
             await rx.author.send("Errors found:\n" + test_log)
         else:
             await rx.author.send("Administrator only.")
-
     except Exception as e:
         print(str(e))
 
