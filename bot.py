@@ -48,8 +48,8 @@ for guild in os.scandir("user"):
 # Initialise dumping queue
 #devnull = open(os.devnull, "wb")
 Popen(["python", "dumpqueue.py"])
-
-bot = commands.Bot(command_prefix=".", owner_id=119094696487288833)
+owner = 119094696487288833
+bot = commands.Bot(command_prefix=".", owner_id=owner)
 
 @bot.event
 async def on_ready():
@@ -57,9 +57,48 @@ async def on_ready():
     await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="you."))
 
 @bot.command()
+async def verify_count(rx):
+    valid_channel_names = ["counting"]
+    try:
+        if rx.author.permissions_in(rx.message.channel).administrator or rx.author.id == owner:
+            if rx.message.channel.name not in valid_channel_names:
+                await rx.author.send(f"Cannot test in a non-counting channel. Channel name: '{rx.message.channel.name}'.\n" + 
+                                     "Change the channel name to '#counting' or edit the allowed names in bot.py.")
+                return
+            
+            test_log = ""
+            await rx.author.send("Starting counting channel tests.")
+            await rx.message.delete()
+            c = await rx.message.channel.history(limit=None).flatten()
+            c.reverse()
+            mistake_offset = 0
+            async with rx.message.channel.typing():
+                for pos, message in enumerate(c[:-1], start=1):
+                    try:
+                        body = int(message.content)
+                    except ValueError as verr:
+                        test_log += f"Error at message {message.author}:\"{message.content}\", position {pos}: Non-int text\n"
+                        body = pos
+                        
+                    if body != pos + mistake_offset:
+                        test_log += f"Error at message {message.author}:\"{message.content}\", position {pos}: Text order mismatch\n"
+                        mistake_offset = (body - pos)
+                        
+                    if message.author == c[pos].author:
+                        test_log += f"Error at message {c[pos].author}:\"{c[pos].content}\", position {pos+1}: Double posting\n"
+
+
+            await rx.author.send("Errors found:\n" + test_log)
+        else:
+            await rx.author.send("Administrator only.")
+            
+    except Exception as e:
+        print(str(e))
+
+@bot.command()
 async def dump(rx):
     try:
-        if rx.author.permissions_in(rx.message.channel).administrator or rx.author.id == 119094696487288833:
+        if rx.author.permissions_in(rx.message.channel).administrator or rx.author.id == owner:
             i = 0
             await rx.send("Scanning channel...")
             c = await rx.message.channel.history(limit=None).flatten()
@@ -103,7 +142,7 @@ async def dump(rx):
 async def collect(rx, *, user: discord.Member=-1):
     if user == -1:
         user = rx.author
-    elif rx.author.permissions_in(rx.message.channel).administrator or rx.author.id == 119094696487288833:
+    elif rx.author.permissions_in(rx.message.channel).administrator or rx.author.id == owner:
         pass
     else:
         await rx.send("You are not allowed to collect from other members.")
