@@ -48,7 +48,8 @@ for guild in os.scandir("user"):
 #devnull = open(os.devnull, "wb")
 Popen(["python", "dumpqueue.py"])
 owner = 119094696487288833
-bot = commands.Bot(command_prefix=".", owner_id=owner)
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix=".", owner_id=owner, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -75,14 +76,14 @@ async def verify_count(rx):
                     try:
                         body = int(message.content)
                     except ValueError as verr:
-                        test_log += f"Error at message {message.author}:\"{message.content}\", position {pos}: Non-int text\n"
+                        test_log += f"Error at message {message.author}:\"{message.content}\", position {pos}: Non-integer\n"
                         body = pos
                     if body != pos + mistake_offset:
                         test_log += f"Error at message {message.author}:\"{message.content}\", position {pos}: Text order mismatch\n"
                         mistake_offset = (body - pos)
                     if message.author == c[pos].author:
                         test_log += f"Error at message {c[pos].author}:\"{c[pos].content}\", position {pos+1}: Double posting\n"
-            await rx.author.send("Errors found:\n" + test_log)
+            await rx.author.send(f"Errors found:\n{test_log}")
         else:
             await rx.author.send("Administrator only.")
     except Exception as e:
@@ -198,6 +199,21 @@ def get_random_quote(channel):
             return random.choice(log)
         else:
             return "Awoo... this channel has not been dumped."
+
+@bot.command()
+async def rv(rx):
+    voice_channel = rx.author.voice
+    author_activity = rx.author.activity
+    empty_vc = None; users = []
+    if not voice_channel:
+        await rx.send("Awoo... you are not in a voice channel."); return
+    else:
+        guild_vcs = rx.guild.voice_channels
+        for guild_member in rx.guild.members:
+            if guild_member.voice:
+                users.append(guild_member)
+        for user in users:
+            await user.move_to(random.choice(guild_vcs))
 
 @bot.command()
 async def rm(rx, *, user: discord.Member=-1):
