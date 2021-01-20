@@ -204,7 +204,7 @@ def get_random_quote(channel):
 async def rv(rx):
     voice_channel = rx.author.voice
     author_activity = rx.author.activity
-    i = 0; users = []
+    joinable = False; users = []
     if not voice_channel:
         await rx.send("Awoo... you are not in a voice channel."); return
     else:
@@ -212,11 +212,13 @@ async def rv(rx):
         for guild_member in rx.guild.members:
             if guild_member.voice:
                 users.append(guild_member)
+        for guild_vc in guild_vcs:
+            if rx.me.permissions_in(guild_vc).connect:
+                joinable = True; break
+        if joinable == False:
+            await rx.send("Awoo... I don't have permission to do that."); return
         for user in users:
             while True:
-                i = i + 1
-                if i > 100:
-                    await rx.send("Awoo... I don't have permission to do that."); return
                 random_vc = random.choice(guild_vcs)
                 if rx.me.permissions_in(random_vc).connect:
                     break
