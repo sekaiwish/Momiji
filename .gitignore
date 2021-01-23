@@ -1,6 +1,7 @@
 *pycache*
 token
+
+files
+messages
 queue
-guild*
-user*
-verify*
+verify
