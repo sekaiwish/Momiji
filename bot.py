@@ -5,7 +5,7 @@ from classes import Message, QueuedFile, Responses
 
 channels = {}
 owner = 119094696487288833
-bot = commands.Bot(command_prefix='.t', owner_id=owner, intents=discord.Intents.all())
+bot = commands.Bot(command_prefix='.', owner_id=owner, intents=discord.Intents.all())
 responses = Responses()
 
 def load(file):
