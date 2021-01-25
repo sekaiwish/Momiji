@@ -141,11 +141,9 @@ async def rt(rx, max=200):
 async def rm(rx, user: discord.Member=None):
     if user == None: user = rx.author.id
     else: user = user.id
-    text = ''
-    for gc in rx.guild.text_channels:
-        if gc.id in channels: text = text.join([m.body+'\n' if m.author == user else '' for m in channels[gc.id]])
-    if text == '':
-        await rx.send(responses.channels_not_dumped); return
+    if not rx.channel.id in channels:
+        await rx.send(responses.channel_not_dumped); return
+    text = ''.join([m.body+'\n' if m.author == user else '' for m in channels[rx.channel.id]])
     await rx.send(markovify.Text(text).make_short_sentence(250))
 
 @bot.command()

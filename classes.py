@@ -13,7 +13,6 @@ class QueuedFile:
 
 class Responses:
     def __init__(self):
-        self.guild_not_dumped= 'Awoo... I couldn\'t find any dumped channels.'
         self.channel_not_dumped = 'Awoo... this channel is not dumped.'
         self.channel_dumping = 'Awoo... this channel is currently dumping, please wait.'
         self.user_not_dumped = 'Awoo... this user has not been researched.'
