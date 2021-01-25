@@ -1,11 +1,13 @@
 #!/usr/bin/python -u
-import os, time, random, multiprocessing, asyncio, pickle, requests, markovify, discord
+import os, time, random, threading, asyncio, pickle, requests, markovify, discord
 from discord.ext import commands
 from classes import Message, QueuedFile, Responses
 
 channels = {}
 owner = 119094696487288833
-bot = commands.Bot(command_prefix='.', owner_id=owner, intents=discord.Intents.all())
+intents = discord.Intents.none()
+intents.guilds = True; intents.members = True; intents.voice_states = True; intents.guild_messages = True
+bot = commands.Bot(command_prefix='.', owner_id=owner, intents=intents)
 responses = Responses()
 
 def load(file):
@@ -86,17 +88,14 @@ async def dump(rx):
             async with rx.channel.typing():
                 for message in c:
                     if message.author.bot: continue
-                    if message.content:
-                        attachments = set()
-                        for attachment in message.attachments:
-                            extension = attachment.url.split('.')[-1]
-                            attachments.add(f'{attachment.id}.{extension}')
-                        messages.add(Message(message.content, message.author.id, message.created_at, attachments))
-                        i += 1
-                    if message.attachments:
-                        for file in message.attachments:
-                            files.add(QueuedFile(file.url, message.channel.id, file.id))
-                            j += 1
+                    attachments = set()
+                    for attachment in message.attachments:
+                        extension = attachment.url.split('.')[-1]
+                        attachments.add(f'{attachment.id}.{extension}')
+                        files.add(QueuedFile(attachment.url, message.channel.id, attachment.id))
+                        j += 1
+                    messages.add(Message(message.content, message.author.id, message.created_at, attachments))
+                    i += 1
             if last_message: messages = messages.union(channels[rx.channel.id])
             save(f'messages/{rx.channel.id}', messages)
             save(f'queue/{rx.channel.id}', files)
@@ -203,6 +202,6 @@ async def on_ready():
 async def on_command_error(*a):
     pass
 
-queue = multiprocessing.Process(target=dump_queue)
+queue = threading.Thread(target=dump_queue, daemon=True)
 queue.start()
 bot.run(token)
