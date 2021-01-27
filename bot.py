@@ -74,6 +74,15 @@ def random_image(channel):
         if message.attachments:
             return random.choice(tuple(message.attachments))
 
+def guild_dumped(guild):
+    for channel in guild.text_channels:
+        if channel.id in channels: return True
+    return False
+
+def channel_dumped(channel):
+    if channel.id in channels: return True
+    else: return False
+
 @bot.command()
 async def dump(rx):
     try:
@@ -112,7 +121,7 @@ async def dump(rx):
 
 @bot.command()
 async def rl(rx, limit=1):
-    if not rx.channel.id in channels:
+    if not channel_dumped(rx.channel):
         await rx.send(responses.channel_not_dumped); return
     if limit > 15: limit = 15
     quotes = ''
@@ -123,38 +132,37 @@ async def rl(rx, limit=1):
 async def ri(rx, channel: discord.TextChannel=None):
     if channel == None: channel = rx.channel.id
     else: channel = channel.id
-    if not channel in channels:
+    if not channel_dumped:
         await rx.send(responses.channel_not_dumped); return
     if os.path.exists(f'queue/{channel}'):
         await rx.send(responses.channel_dumping); return
-    log = channels[channel]
     file = f'files/{random_image(channel)}'
     await rx.send(file=discord.File(file), content=random_quote(channel))
 
 @bot.command()
 async def rt(rx, max=200):
     if max > 2000: max = 2000
+    if not guild_dumped(rx.guild):
+        await rx.send(responses.guild_not_dumped); return
     text = ''
     for gc in rx.guild.text_channels:
         if gc.id in channels: text += ' '.join([m.body+'\n' for m in channels[gc.id]])
-    if text == '':
-        await rx.send(responses.guild_not_dumped); return
     await rx.send(markovify.Text(text).make_short_sentence(max))
 
 @bot.command()
 async def rm(rx, user: discord.Member=None):
     if user == None: user = rx.author.id
     else: user = user.id
+    if not guild_dumped(rx.guild):
+        await rx.send(responses.guild_not_dumped); return
     text = ''
     for gc in rx.guild.text_channels:
         if gc.id in channels: text += ' '.join([m.body+'\n' if m.author == user else '' for m in channels[rx.channel.id]])
-    if text == '':
-        await rx.send(responses.guild_not_dumped); return
     await rx.send(markovify.Text(text).make_short_sentence(250))
 
 @bot.command()
 async def rp(rx):
-    if not rx.channel.id in channels:
+    if not channel_dumped:
         await rx.send(responses.channel_not_dumped); return
     names = random.choices([m.display_name for m in rx.guild.members], k=2)
     if names[0] == names[1]:
