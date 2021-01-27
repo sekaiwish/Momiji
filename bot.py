@@ -133,12 +133,12 @@ async def ri(rx, channel: discord.TextChannel=None):
 
 @bot.command()
 async def rt(rx, max=200):
-    if not rx.channel.id in channels:
-        await rx.send(responses.channel_not_dumped); return
     if max > 2000: max = 2000
     text = ''
     for gc in rx.guild.text_channels:
         if gc.id in channels: text += ' '.join([m.body+'\n' for m in channels[gc.id]])
+    if text == '':
+        await rx.send(responses.guild_not_dumped); return
     await rx.send(markovify.Text(text).make_short_sentence(max))
 
 @bot.command()
