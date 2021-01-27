@@ -123,26 +123,26 @@ async def dump(rx):
 async def rs(rx):
     if not guild_dumped(rx.guild):
         await rx.send(responses.guild_not_dumped); return
-    tracked = []; messages = set(); text = ''; members = {}; members_text = {}
+    tracked = []; messages = 0; text = ''; members_msg = {}; members_char = {}
     for channel in rx.guild.text_channels:
         if channel.id in channels:
             tracked.append(channel.name)
-            for m in channels[channel.id]: messages.add(m)
-    for m in messages:
-        text += m.body
-        if m.author in members:
-            members[m.author] += 1; members_text[m.author] += len(m.body)
-        else:
-            members[m.author] = 1; members_text[m.author] = len(m.body)
-    most_msg = await bot.fetch_user(max(members, key=members.get))
-    most_char = await bot.fetch_user(max(members_text, key=members_text.get))
+            for m in channels[channel.id]:
+                text += m.body; messages += 1
+                if m.author in members_msg:
+                    members_msg[m.author] += 1; members_char[m.author] += len(m.body)
+                else:
+                    members_msg[m.author] = 1; members_char[m.author] = len(m.body)
+    msg_id = max(members_msg, key=members_msg.get)
+    char_id = max(members_char, key=members_char.get)
+    msg_name = await bot.fetch_user(msg_id); char_name = await bot.fetch_user(char_id)
     embed=discord.Embed(); embed.set_thumbnail(url=f'{rx.guild.icon_url}')
     embed.add_field(name='Statistics for:', value=f'{rx.guild.name}', inline=False)
     embed.add_field(name='Tracked Channels', value=f'{tracked}', inline=True)
-    embed.add_field(name='Number of Messages', value=f'{len(messages)}', inline=True)
+    embed.add_field(name='Number of Messages', value=f'{messages}', inline=True)
     embed.add_field(name='Number of Characters', value=f'{len(text)}', inline=True)
-    embed.add_field(name='Most messages sent', value=f'{most_msg}', inline=True)
-    embed.add_field(name='Most characters sent', value=f'{most_char}', inline=True)
+    embed.add_field(name='Most messages sent', value=f'{msg_name} ({members_msg[msg_id]})', inline=True)
+    embed.add_field(name='Most characters sent', value=f'{char_name} ({members_char[char_id]})', inline=True)
     await rx.send(embed=embed)
 
 @bot.command()
