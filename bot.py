@@ -43,20 +43,22 @@ for channel in os.scandir('messages'):
 def dump_queue():
     valid = {'png', 'jpg', 'jpeg', 'gif', 'webm', 'mov', 'mp4'}
     while True:
-        queue = os.listdir('queue')
-        if queue:
-            queue_file = f'queue/{queue[0]}'
-            data = load(queue_file)
-            if data == set():
-                os.remove(queue_file); print(f'Image dump for {queue[0]} finished'); continue
-            download = data.pop()
-            save(queue_file, data)
-            extension = download.url.split('.')[-1]
-            if os.path.exists(f'files/{download.id}.{extension}'): continue
-            if extension in valid:
-                r = requests.get(download.url, stream=True)
-                with open(f'files/{download.id}.{extension}', 'wb') as fd:
-                    for chunk in r.iter_content(chunk_size=128): fd.write(chunk)
+        queues = [f for f in os.scandir('queue')]
+        queues.sort(key=lambda x: os.path.getctime(x))
+        if queues:
+            while True:
+                queue = f'{queues[0].path}'
+                data = load(queue)
+                if data == set():
+                    os.remove(queue); print(f'Image dump for {queues[0].name} finished'); break
+                download = data.pop()
+                save(queue, data)
+                extension = download.url.split('.')[-1]
+                if os.path.exists(f'files/{download.id}.{extension}'): continue
+                if extension in valid:
+                    r = requests.get(download.url, stream=True)
+                    with open(f'files/{download.id}.{extension}', 'wb') as fd:
+                        for chunk in r.iter_content(chunk_size=128): fd.write(chunk)
         else: time.sleep(1)
 
 def random_quote(channel):
@@ -99,7 +101,8 @@ async def dump(rx):
             if last_message: messages = messages.union(channels[rx.channel.id])
             save(f'messages/{rx.channel.id}', messages)
             save(f'queue/{rx.channel.id}', files)
-            await rx.send(f'Collected {i} messages, queued {j} images.')
+            queue = len(os.listdir('queue'))
+            await rx.send(f'Collected {i} messages, queued {j} images. (#{queue} in queue)')
             channels[rx.channel.id] = messages
             print(f'Dump finished ({rx.guild.name}, {rx.channel.name})')
         else:
