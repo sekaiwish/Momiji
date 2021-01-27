@@ -120,6 +120,32 @@ async def dump(rx):
         print(f'Dump failed ({rx.guild.name}, {rx.channel.name})')
 
 @bot.command()
+async def rs(rx):
+    if not guild_dumped(rx.guild):
+        await rx.send(responses.guild_not_dumped); return
+    tracked = []; messages = set(); text = ''; members = {}; members_text = {}
+    for channel in rx.guild.text_channels:
+        if channel.id in channels:
+            tracked.append(channel.name)
+            for m in channels[channel.id]: messages.add(m)
+    for m in messages:
+        text += m.body
+        if m.author in members:
+            members[m.author] += 1; members_text[m.author] += m.body
+        else:
+            members[m.author] = 1; members_text[m.author] = m.body
+    most_msg = await bot.fetch_user(max(members, key=members.get))
+    most_char = await bot.fetch_user(max(members_text, key=members_text.get))
+    embed=discord.Embed(); embed.set_thumbnail(url=f'{rx.guild.icon_url}')
+    embed.add_field(name='Statistics for:', value=f'{rx.guild.name}', inline=False)
+    embed.add_field(name='Tracked Channels', value=f'{tracked}', inline=True)
+    embed.add_field(name='Number of Messages', value=f'{len(messages)}', inline=True)
+    embed.add_field(name='Number of Characters', value=f'{len(text)}', inline=True)
+    embed.add_field(name='Most messages sent', value=f'{most_msg}', inline=True)
+    embed.add_field(name='Most characters sent', value=f'{most_char}', inline=True)
+    await rx.send(embed=embed)
+
+@bot.command()
 async def rl(rx, limit=1):
     if not channel_dumped(rx.channel):
         await rx.send(responses.channel_not_dumped); return
