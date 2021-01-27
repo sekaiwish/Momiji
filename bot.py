@@ -131,9 +131,9 @@ async def rs(rx):
     for m in messages:
         text += m.body
         if m.author in members:
-            members[m.author] += 1; members_text[m.author] += m.body
+            members[m.author] += 1; members_text[m.author] += len(m.body)
         else:
-            members[m.author] = 1; members_text[m.author] = m.body
+            members[m.author] = 1; members_text[m.author] = len(m.body)
     most_msg = await bot.fetch_user(max(members, key=members.get))
     most_char = await bot.fetch_user(max(members_text, key=members_text.get))
     embed=discord.Embed(); embed.set_thumbnail(url=f'{rx.guild.icon_url}')
