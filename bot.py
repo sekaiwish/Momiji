@@ -62,7 +62,7 @@ def dump_queue():
         else: time.sleep(1)
 
 def random_quote(channel):
-    boring = {'.ri', '.rl', '.rt', 't!help', 't!slots'}
+    boring = {'', '.ri', '.rl', '.rt', 't!help', 't!slots'}
     while True:
         message = random.choice(tuple(channels[channel])).body
         if message not in boring: return message
@@ -171,8 +171,8 @@ async def rt(rx, max=200):
         await rx.send(responses.guild_not_dumped); return
     text = ''
     for gc in rx.guild.text_channels:
-        if gc.id in channels: text += ' '.join([m.body+'\n' for m in channels[gc.id]])
-    await rx.send(markovify.Text(text).make_sentence())
+        if gc.id in channels: text += ' '.join([m.body for m in channels[gc.id]])
+    await rx.send(markovify.Text(text).make_sentence(tries=50))
 
 @bot.command()
 async def rm(rx, user: discord.Member=None):
@@ -182,8 +182,8 @@ async def rm(rx, user: discord.Member=None):
         await rx.send(responses.guild_not_dumped); return
     text = ''
     for gc in rx.guild.text_channels:
-        if gc.id in channels: text += ' '.join([m.body+'\n' if m.author == user else '' for m in channels[rx.channel.id]])
-    await rx.send(markovify.Text(text).make_sentence())
+        if gc.id in channels: text += ' '.join([m.body if m.author == user else '' for m in channels[gc.id]])
+    await rx.send(markovify.Text(text).make_sentence(tries=50))
 
 @bot.command()
 async def rp(rx):
