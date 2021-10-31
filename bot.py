@@ -172,7 +172,7 @@ async def rt(rx, max=200):
     text = ''
     for gc in rx.guild.text_channels:
         if gc.id in channels: text += ' '.join([m.body+'\n' for m in channels[gc.id]])
-    await rx.send(markovify.Text(text).make_short_sentence(max))
+    await rx.send(markovify.Text(text).make_sentence())
 
 @bot.command()
 async def rm(rx, user: discord.Member=None):
@@ -183,7 +183,7 @@ async def rm(rx, user: discord.Member=None):
     text = ''
     for gc in rx.guild.text_channels:
         if gc.id in channels: text += ' '.join([m.body+'\n' if m.author == user else '' for m in channels[rx.channel.id]])
-    await rx.send(markovify.Text(text).make_short_sentence(250))
+    await rx.send(markovify.Text(text).make_sentence())
 
 @bot.command()
 async def rp(rx):
