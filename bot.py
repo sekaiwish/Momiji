@@ -111,18 +111,18 @@ async def dump(rx):
             save(f'messages/{rx.channel.id}', messages)
             save(f'queue/{rx.channel.id}', files)
             queue = len(os.listdir('queue'))
-            await rx.send(f'Collected {i} messages, queued {j} images. (#{queue} in queue)')
+            await rx.message.reply(f'Collected {i} messages, queued {j} images. (#{queue} in queue)')
             channels[rx.channel.id] = messages
             print(f'Dump finished ({rx.guild.name}, {rx.channel.name})')
         else:
-            await rx.send(responses.no_permission)
+            await rx.message.reply(responses.no_permission)
     except:
         print(f'Dump failed ({rx.guild.name}, {rx.channel.name})')
 
 @bot.command()
 async def rs(rx):
     if not guild_dumped(rx.guild):
-        await rx.send(responses.guild_not_dumped); return
+        await rx.message.reply(responses.guild_not_dumped); return
     tracked = []; messages = 0; text = ''; members_msg = {}; members_char = {}
     for channel in rx.guild.text_channels:
         if channel.id in channels:
@@ -142,25 +142,25 @@ async def rs(rx):
     embed.add_field(name='Number of Characters', value=f'{len(text):,}', inline=True)
     embed.add_field(name='Most messages sent', value=f'{msg_name} ({members_msg[msg_id]:,})', inline=True)
     embed.add_field(name='Most characters sent', value=f'{char_name} ({members_char[char_id]:,})', inline=True)
-    await rx.send(embed=embed)
+    await rx.message.reply(embed=embed)
 
 @bot.command()
 async def rl(rx, limit=1):
     if not channel_dumped(rx.channel):
-        await rx.send(responses.channel_not_dumped); return
+        await rx.message.reply(responses.channel_not_dumped); return
     if limit > 15: limit = 15
     quotes = ''
     for i in range(limit): quotes += f'{random_quote(rx.channel.id)}\n'
-    await rx.send(quotes)
+    await rx.message.reply(quotes)
 
 @bot.command()
 async def ri(rx, channel: discord.TextChannel=None):
     if channel == None: channel = rx.channel.id
     else: channel = channel.id
     if not channel_dumped(rx.channel):
-        await rx.send(responses.channel_not_dumped); return
+        await rx.message.reply(responses.channel_not_dumped); return
     if os.path.exists(f'queue/{channel}'):
-        await rx.send(responses.channel_dumping); return
+        await rx.message.reply(responses.channel_dumping); return
     file = f'files/{random_image(channel)}'
     await rx.message.reply(file=discord.File(file), content=random_quote(channel))
 
@@ -168,43 +168,43 @@ async def ri(rx, channel: discord.TextChannel=None):
 async def rt(rx, max=200):
     if max > 2000: max = 2000
     if not guild_dumped(rx.guild):
-        await rx.send(responses.guild_not_dumped); return
+        await rx.message.reply(responses.guild_not_dumped); return
     text = ''
     for gc in rx.guild.text_channels:
         if gc.id in channels: text += ' '.join([m.body for m in channels[gc.id]])
-    await rx.send(markovify.Text(text).make_sentence(tries=50))
+    await rx.message.reply(markovify.Text(text).make_sentence(tries=50))
 
 @bot.command()
 async def rm(rx, user: discord.Member=None):
     if user == None: user = rx.author.id
     else: user = user.id
     if not guild_dumped(rx.guild):
-        await rx.send(responses.guild_not_dumped); return
+        await rx.message.reply(responses.guild_not_dumped); return
     text = ''
     for gc in rx.guild.text_channels:
         if gc.id in channels: text += ' '.join([m.body if m.author == user else '' for m in channels[gc.id]])
-    await rx.send(markovify.Text(text).make_sentence(tries=50))
+    await rx.message.reply(markovify.Text(text).make_sentence(tries=50))
 
 @bot.command()
 async def rp(rx):
     if not channel_dumped:
-        await rx.send(responses.channel_not_dumped); return
+        await rx.message.reply(responses.channel_not_dumped); return
     names = random.choices([m.display_name for m in rx.guild.members], k=2)
     if names[0] == names[1]:
-        await rx.send(f'{names[0]}: {random_quote(rx.channel.id)}\nalso {names[1]}: {random_quote(rx.channel.id)}')
+        await rx.message.reply(f'{names[0]}: {random_quote(rx.channel.id)}\nalso {names[1]}: {random_quote(rx.channel.id)}')
     else:
-        await rx.send(f'{names[0]}: {random_quote(rx.channel.id)}\n{names[1]}: {random_quote(rx.channel.id)}')
+        await rx.message.reply(f'{names[0]}: {random_quote(rx.channel.id)}\n{names[1]}: {random_quote(rx.channel.id)}')
 
 @bot.command()
 async def rv(rx):
     if not rx.author.voice:
-        await rx.send(responses.no_voice_channel); return
+        await rx.message.reply(responses.no_voice_channel); return
     joinable = False
     for vc in rx.guild.voice_channels:
         if rx.me.permissions_in(vc).connect:
             joinable = True; break
     if not joinable:
-        await rx.send(responses.no_permission); return
+        await rx.message.reply(responses.no_permission); return
     for member in rx.guild.members:
         if member.voice:
             while True:
@@ -217,17 +217,17 @@ async def rv(rx):
 async def verify(rx):
     image = random.choice(os.listdir('verify'))
     file = f'verify/{image}'
-    await rx.send(file=discord.File(file))
+    await rx.message.reply(file=discord.File(file))
 
 @ri.error
 async def ri_error(rx, error):
     if isinstance(error, commands.BadArgument):
-        await rx.send(responses.no_channel)
+        await rx.message.reply(responses.no_channel)
 
 @rm.error
 async def rm_error(rx, error):
     if isinstance(error, commands.BadArgument):
-        await rx.send(responses.no_user)
+        await rx.message.reply(responses.no_user)
 
 @bot.event
 async def on_ready():
