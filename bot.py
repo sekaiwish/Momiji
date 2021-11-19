@@ -157,7 +157,7 @@ async def rl(rx, limit=1):
 async def ri(rx, channel: discord.TextChannel=None):
     if channel == None: channel = rx.channel.id
     else: channel = channel.id
-    if not channel_dumped:
+    if not channel_dumped(rx.channel):
         await rx.send(responses.channel_not_dumped); return
     if os.path.exists(f'queue/{channel}'):
         await rx.send(responses.channel_dumping); return
