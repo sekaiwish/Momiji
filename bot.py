@@ -62,7 +62,7 @@ def dump_queue():
         else: time.sleep(1)
 
 def random_quote(channel):
-    boring = {'', '.ri', '.rl', '.rt', 't!help', 't!slots'}
+    boring = {'', '.ri', '.rl', '.rt', '.rm', 't!help', 't!slots'}
     while True:
         message = random.choice(tuple(channels[channel])).body
         if message not in boring: return message
