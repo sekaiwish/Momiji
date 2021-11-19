@@ -162,7 +162,7 @@ async def ri(rx, channel: discord.TextChannel=None):
     if os.path.exists(f'queue/{channel}'):
         await rx.send(responses.channel_dumping); return
     file = f'files/{random_image(channel)}'
-    await rx.send(file=discord.File(file), content=random_quote(channel))
+    await rx.message.reply(file=discord.File(file), content=random_quote(channel))
 
 @bot.command()
 async def rt(rx, max=200):
