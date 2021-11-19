@@ -180,9 +180,10 @@ async def rm(rx, user: discord.Member=None):
     else: user = user.id
     if not guild_dumped(rx.guild):
         await rx.message.reply(responses.guild_not_dumped); return
+    boring = {'', '.ri', '.rl', '.rt', '.rm', 't!help', 't!slots'}
     text = ''
     for gc in rx.guild.text_channels:
-        if gc.id in channels: text += ' '.join([m.body if m.author == user else '' for m in channels[gc.id]])
+        if gc.id in channels: text += ' '.join([m.body if (m.author == user and m.body not in boring) else '' for m in channels[gc.id]])
     await rx.message.reply(markovify.Text(text).make_sentence(tries=50))
 
 @bot.command()
